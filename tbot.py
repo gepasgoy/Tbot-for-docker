@@ -54,7 +54,7 @@ def start_server():
         client_socket.close()
 
 # Функция для запуска сервера в отдельном потоке
-def run_server_in_thread():
+async def run_server_in_thread():
     server_thread = threading.Thread(target=start_server)
     server_thread.daemon = True  # Устанавливаем поток как "демон"
     server_thread.start()
@@ -64,9 +64,9 @@ def run_server_in_thread():
 print("Основной поток продолжает выполняться...")
 
 async def main():
-    run_server_in_thread()
+    t1 = asyncio.create_task(run_server_in_thread())
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
-
+    await t1
 if __name__ == "__main__":
     asyncio.run(main())
